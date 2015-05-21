@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.bitter.Data.DataColumn;
+import com.bitter.data.DataColumn;
 
 public class JdbcUtils {
 	static {

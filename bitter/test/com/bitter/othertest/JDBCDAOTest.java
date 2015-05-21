@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.bitter.Data.DataColumn;
+import com.bitter.data.DataColumn;
 import com.bitter.util.JdbcUtils;
 
 public class JDBCDAOTest {

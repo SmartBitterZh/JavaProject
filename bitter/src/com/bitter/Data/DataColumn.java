@@ -1,11 +1,12 @@
-package com.bitter.Data;
+package com.bitter.data;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-public class DataColumn {
+public class DataColumn  {
 
+	
 	private boolean allowDBNull;
 	private String caption;
 	private String columnName;
@@ -22,14 +23,17 @@ public class DataColumn {
 			columnName = resultSetMetaData.getColumnName(columnIndex);
 			dataType = resultSetMetaData.getColumnTypeName(columnIndex);
 			String _lable = resultSetMetaData.getColumnLabel(columnIndex);
-			String _className = resultSetMetaData.getColumnClassName(columnIndex);
+			String _className = resultSetMetaData
+					.getColumnClassName(columnIndex);
 			String _catalog = resultSetMetaData.getCatalogName(columnIndex);
 			String _tableName = resultSetMetaData.getTableName(columnIndex);
 			String _schemaName = resultSetMetaData.getSchemaName(columnIndex);
 			int _precision = resultSetMetaData.getPrecision(columnIndex);
 			int _scale = resultSetMetaData.getScale(columnIndex);
-			boolean _isAutoIncrement = resultSetMetaData.isAutoIncrement(columnIndex);
-			boolean _isCaseSensitive = resultSetMetaData.isCaseSensitive(columnIndex);
+			boolean _isAutoIncrement = resultSetMetaData
+					.isAutoIncrement(columnIndex);
+			boolean _isCaseSensitive = resultSetMetaData
+					.isCaseSensitive(columnIndex);
 			boolean _isCurrency = resultSetMetaData.isCurrency(columnIndex);
 			boolean _isReadOnly = resultSetMetaData.isReadOnly(columnIndex);
 			int _isNullable = resultSetMetaData.isNullable(columnIndex);

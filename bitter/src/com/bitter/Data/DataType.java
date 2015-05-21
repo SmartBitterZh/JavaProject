@@ -1,4 +1,4 @@
-package com.bitter.Data;
+package com.bitter.data;
 
 public class DataType {
 
