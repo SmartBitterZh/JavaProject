@@ -11,7 +11,8 @@
 <head>
 <base href="<%=basePath%>">
 
-<title>My JSP 'index.jsp' starting page</title>
+<title>My JSP 'user_add.jsp' starting page</title>
+
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -20,12 +21,14 @@
 <!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
+
 </head>
+
 <body>
-	Welcome ${userName }
-	<a href="user">user</a>
-	<a href="userAdd">Add user</a>
-	<a href="userUpdate">Update user</a>
-	<a href="./user/user_login.jsp">User login</a>
+
+	<font color="red">
+		 ${requestScope.info}
+	</font>
+
 </body>
 </html>

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.bitter.action.user.UserAction;
 import com.bitter.data.DataColumn;
+import com.bitter.service.user.IUserService;
+import com.bitter.service.user.UserServiceImpl;
 import com.bitter.util.JdbcUtils;
 
 public class LoginCL extends HttpServlet {
@@ -54,8 +56,8 @@ public class LoginCL extends HttpServlet {
 	}
 	
 	private boolean checkLogin(String user, String password) {
-		UserAction _action = new UserAction();
-		return _action.login(user, password);
+		IUserService _service = new UserServiceImpl();
+		return _service.login(user, password);
 	}
 	
 	private boolean checkLoginJDBC(String user, String password) {
