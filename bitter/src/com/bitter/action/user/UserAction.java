@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
 
+import com.bitter.bean.user.User;
 import com.bitter.service.user.IUserService;
 import com.bitter.service.user.UserServiceImpl;
 import com.opensymphony.xwork2.ActionSupport;
@@ -14,29 +15,41 @@ public class UserAction extends ActionSupport {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String userName;
-	private String password;
+	IUserService _service = new UserServiceImpl();
+	private User user;
 
 	private String info = "struts";
 
 	public String add() {
 		info = "Add user information.";
+
+		HttpServletRequest reqeust = ServletActionContext.getRequest();
+		user = new User();
+		user.setName(reqeust.getParameter("username"));
+		user.setPassword(reqeust.getParameter("password"));
+		_service.save(user);
 		return "add";
 	}
 
 	public String update() {
 		info = "Update user information.";
+
+		HttpServletRequest reqeust = ServletActionContext.getRequest();
+		user = new User();
+		user.setName(reqeust.getParameter("username"));
+		user.setPassword(reqeust.getParameter("password"));
+		_service.update(user);
 		return "update";
 	}
 
 	public String login() {
-		IUserService _service = new UserServiceImpl();
 		// _service.login(userName, password);
 		// userName.endsWith("bitter")&& password.endsWith("123456");
 		HttpServletRequest reqeust = ServletActionContext.getRequest();
-		userName = reqeust.getParameter("username");
-		password = reqeust.getParameter("password");
-		boolean _login = _service.login(userName, password);
+		user = new User();
+		user.setName(reqeust.getParameter("username"));
+		user.setPassword(reqeust.getParameter("password"));
+		boolean _login = _service.login(user.getName(), user.getPassword());
 		if (_login)
 			return SUCCESS;
 		else
@@ -48,20 +61,8 @@ public class UserAction extends ActionSupport {
 		return SUCCESS;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public User getUser() {
+		return user;
 	}
 
 	public String getInfo() {

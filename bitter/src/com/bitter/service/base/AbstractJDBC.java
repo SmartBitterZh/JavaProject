@@ -27,7 +27,7 @@ public abstract class AbstractJDBC<T> implements IDAO<T> {
 	protected Class<T> _clazz = GenericsUtils.getGenericClass(getClass());
 
 	@Override
-	public void save(T obj) {
+	public boolean save(T obj) {
 
 		Connection conn = JdbcUtils.getConnection();
 		PreparedStatement ps = null;
@@ -41,43 +41,42 @@ public abstract class AbstractJDBC<T> implements IDAO<T> {
 			ps.setString(3, _user.getPassword().trim());
 			int i = ps.executeUpdate();
 			conn.commit();
+			return i > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			JdbcUtils.release(null, ps, conn);
 		}
 
-		if (obj != null) {
-			Session _session = HibernateSessionFactoty.getSession();
-			Transaction _tx = _session.beginTransaction();
-			_session.save(obj);
-			_tx.commit();
-			_session.close();
-		}
+		return false;
 	}
 
 	@Override
-	public void update(T obj) {
+	public boolean update(T obj) {
 		if (obj != null) {
 		}
+		return false;
 	}
 
 	@Override
-	public void delete(T obj) {
+	public boolean delete(T obj) {
 		if (obj != null) {
 		}
+		return false;
 	}
 
 	@Override
-	public void delete(Serializable id) {
+	public boolean delete(Serializable id) {
 		if (id != null)
-			delete(new Serializable[] { id });
+			return delete(new Serializable[] { id });
+		return false;
 	}
 
 	@Override
-	public void delete(Serializable[] ids) {
+	public boolean delete(Serializable[] ids) {
 		if (ids != null && ids.length > 0) {
 		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

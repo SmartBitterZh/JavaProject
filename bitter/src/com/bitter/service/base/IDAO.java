@@ -16,32 +16,32 @@ public interface IDAO<T> {
 	 * 
 	 * @param obj
 	 */
-	public void save(T obj);
+	public boolean save(T obj);
 
 	/**
 	 * update object
 	 * 
 	 * @param obj
 	 */
-	public void update(T obj);
+	public boolean update(T obj);
 
 	/**
 	 * 
 	 * @param obj
 	 */
-	public void delete(T obj);
+	public boolean delete(T obj);
 
 	/**
 	 * 
 	 * @param id
 	 */
-	public void delete(Serializable id);
+	public boolean delete(Serializable id);
 
 	/**
 	 * 
 	 * @param ids
 	 */
-	public void delete(Serializable[] ids);
+	public boolean delete(Serializable[] ids);
 
 	/**
 	 * 

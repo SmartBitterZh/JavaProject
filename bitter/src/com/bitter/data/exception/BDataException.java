@@ -1,6 +1,6 @@
 package com.bitter.data.exception;
 
-public class BitterDataException extends Exception {
+public class BDataException extends Exception {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class BitterDataException extends Exception {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public BitterDataException(String message) {
+	public BDataException(String message) {
         super();
         this.message = message;
     }

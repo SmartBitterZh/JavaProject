@@ -25,46 +25,53 @@ public abstract class AbstractDAO<T> implements IDAO<T> {
 	protected Class<T> _clazz = GenericsUtils.getGenericClass(getClass());
 
 	@Override
-	public void save(T obj) {
+	public boolean save(T obj) {
 		if (obj != null) {
 			Session _session = HibernateSessionFactoty.getSession();
 			Transaction _tx = _session.beginTransaction();
-			_session.save(obj);
+			Serializable _id = _session.save(obj);
 			_tx.commit();
 			_session.close();
+			return _id != null;
 		}
+		return false;
 	}
 
 	@Override
-	public void update(T obj) {
+	public boolean update(T obj) {
 		if (obj != null) {
 			Session _session = HibernateSessionFactoty.getSession();
 			Transaction _tx = _session.beginTransaction();
 			_session.update(obj);
 			_tx.commit();
 			_session.close();
+			return true;
 		}
+		return false;
 	}
 
 	@Override
-	public void delete(T obj) {
+	public boolean delete(T obj) {
 		if (obj != null) {
 			Session _session = HibernateSessionFactoty.getSession();
 			Transaction _tx = _session.beginTransaction();
 			_session.delete(obj);
 			_tx.commit();
 			_session.close();
+			return true;
 		}
+		return false;
 	}
 
 	@Override
-	public void delete(Serializable id) {
+	public boolean delete(Serializable id) {
 		if (id != null)
-			delete(new Serializable[] { id });
+			return delete(new Serializable[] { id });
+		return false;
 	}
 
 	@Override
-	public void delete(Serializable[] ids) {
+	public boolean delete(Serializable[] ids) {
 		if (ids != null && ids.length > 0) {
 			Session _session = HibernateSessionFactoty.getSession();
 			Transaction _tx = null;
@@ -74,7 +81,9 @@ public abstract class AbstractDAO<T> implements IDAO<T> {
 				_tx.commit();
 			}
 			_session.close();
+			return true;
 		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")

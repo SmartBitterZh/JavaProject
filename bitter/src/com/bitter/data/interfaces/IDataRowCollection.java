@@ -1,8 +1,8 @@
-package com.bitter.data;
+package com.bitter.data.interfaces;
 
-import java.util.List;
+import com.bitter.data.DataRow;
 
-public interface IDataRowCollection extends List<IDataRow> {
+public interface IDataRowCollection extends Iterable<IDataRow> {
 
 	/**
 	 * Determines whether the collection contains a specific row.

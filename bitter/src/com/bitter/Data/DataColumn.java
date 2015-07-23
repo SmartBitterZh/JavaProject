@@ -1,27 +1,199 @@
 package com.bitter.data;
 
+import java.io.Serializable;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Set;
 
-public class DataColumn  {
+import com.bitter.eventhandler.EventArgs;
+import com.bitter.eventhandler.IEventHandler;
 
-	
+public class DataColumn implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private boolean allowDBNull;
 	private String caption;
 	private String columnName;
 	private String dataType;
 	private Object defaultValue;
-	private HashMap<String, Object> extendedProperties;
+	private Hashtable extendedProperties;
 	private int maxLength;
 	private boolean readOnly;
 	private boolean unique;
+	private IEventHandler propertyChanged;
 
-	// private EventHandler propertyChanged;
+	private void RaisePropertyChanged() {
+		if (propertyChanged != null)
+			propertyChanged.invoked(this, EventArgs.Empty);
+	}
+
+	public boolean isAllowDBNull() {
+		return allowDBNull;
+	}
+
+	public void setAllowDBNull(boolean allowDBNull) {
+		if (this.allowDBNull != allowDBNull) {
+			this.allowDBNull = allowDBNull;
+			RaisePropertyChanged();
+		}
+	}
+
+	public String getCaption() {
+		return caption.isEmpty() ? columnName : caption;
+	}
+
+	public void setCaption(String caption) {
+		String _newCaption = caption.isEmpty() ? "" : caption;
+		if (!this.caption.equals(_newCaption)) {
+			this.caption = _newCaption;
+			RaisePropertyChanged();
+		}
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public void setColumnName(String columnName) {
+		String _newColumnName = columnName.isEmpty() ? "" : columnName;
+		if (!this.caption.equals(_newColumnName)) {
+			this.columnName = _newColumnName;
+			RaisePropertyChanged();
+		}
+	}
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		if (!this.dataType.equals(dataType)) {
+			this.dataType = dataType;
+			RaisePropertyChanged();
+		}
+	}
+
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Object defaultValue) {
+		if ((this.defaultValue == null && defaultValue != null)
+				|| (this.defaultValue != null && !this.defaultValue
+						.equals(defaultValue))) {
+			this.defaultValue = defaultValue;
+
+		}
+	}
+
+	public Hashtable getExtendedProperties() {
+		if (extendedProperties == null)
+			extendedProperties = new Hashtable<>();
+		return extendedProperties;
+	}
+
+	public int getMaxLength() {
+		return maxLength;
+	}
+
+	public void setMaxLength(int maxLength) {
+		if (this.maxLength != maxLength) {
+			this.maxLength = maxLength;
+			RaisePropertyChanged();
+		}
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		if (this.readOnly != readOnly) {
+			this.readOnly = readOnly;
+			RaisePropertyChanged();
+		}
+	}
+
+	public boolean isUnique() {
+		return unique;
+	}
+
+	public void setUnique(boolean unique) {
+		if (this.unique != unique) {
+			this.unique = unique;
+			RaisePropertyChanged();
+		}
+	}
+
+	public void addPropertyChanged(IEventHandler propertyChanged) {
+		this.propertyChanged = propertyChanged;
+	}
+
+	public void removePropertyChanged() {
+		propertyChanged = null;
+	}
+
+	public DataColumn getDataColumn() {
+		DataColumn _column = new DataColumn(this.columnName, this.dataType);
+		_column.setAllowDBNull(this.allowDBNull);
+		if (this.caption != null)
+			_column.setCaption(this.caption);
+		if (this.defaultValue != null)
+			_column.setDefaultValue(this.defaultValue);
+
+		Set _keySet = this.extendedProperties.keySet();
+		Hashtable _table = _column.getExtendedProperties();
+		for (Object _key : _keySet) {
+			_table.put(_key, this.extendedProperties.get(_key));
+		}
+		_column.setMaxLength(this.maxLength);
+		_column.setReadOnly(this.readOnly);
+		_column.setUnique(this.unique);
+		return _column;
+	}
+
+	public DataColumn(String columnName, String dataType, String caption) {
+
+		this.dataType = dataType;
+		this.columnName = columnName.isEmpty() ? "" : columnName;
+		this.allowDBNull = true;
+		this.defaultValue = null;
+		this.maxLength = -1;
+		this.caption = caption;
+	}
+
+	public DataColumn(String columnName, String dataType) {
+		this(columnName, dataType, null);
+	}
+
+	public DataColumn(String columnName) {
+		this(columnName, String.class.getSimpleName(), null);
+	}
+
+	public DataColumn(DataColumn column) {
+		this.allowDBNull = column.isAllowDBNull();
+		this.caption = column.getCaption();
+		this.columnName = column.getColumnName();
+		this.dataType = column.getDataType();
+		this.defaultValue = column.getDefaultValue();
+		if (column.extendedProperties != null
+				&& column.extendedProperties.size() > 0)
+			this.extendedProperties = new Hashtable(
+					column.getExtendedProperties());
+		this.maxLength = column.getMaxLength();
+		this.readOnly = column.isReadOnly();
+		this.unique = column.isUnique();
+	}
+
 	public DataColumn(ResultSetMetaData resultSetMetaData, int columnIndex) {
 		try {
-			columnName = resultSetMetaData.getColumnName(columnIndex);
-			dataType = resultSetMetaData.getColumnTypeName(columnIndex);
+			this.columnName = resultSetMetaData.getColumnName(columnIndex);
+			this.dataType = resultSetMetaData.getColumnTypeName(columnIndex);
 			String _lable = resultSetMetaData.getColumnLabel(columnIndex);
 			String _className = resultSetMetaData
 					.getColumnClassName(columnIndex);
@@ -42,106 +214,11 @@ public class DataColumn  {
 		}
 	}
 
-	public DataColumn(String columnName) {
-		this(columnName, "String", columnName);
-	}
-
-	public DataColumn(String columnName, String dataType) {
-		this(columnName, dataType, columnName);
-	}
-
-	public DataColumn(String columnName, String dataType, String caption) {
-		this.dataType = dataType;
-		this.columnName = columnName == null ? "" : columnName;
-		allowDBNull = true;
-		defaultValue = null;
-		maxLength = -1;
-		this.caption = caption;
-	}
-
-	private void RaisePropertyChanged() {
-		// if(propertyChanged!=null)
-		// propertyChanged()
-	}
-
-	public boolean isAllowDBNull() {
-		return allowDBNull;
-	}
-
-	public void setAllowDBNull(boolean allowDBNull) {
-		this.allowDBNull = allowDBNull;
-		RaisePropertyChanged();
-	}
-
-	public String getCaption() {
-		return caption;
-	}
-
-	public void setCaption(String caption) {
-		this.caption = caption;
-		RaisePropertyChanged();
-	}
-
-	public String getColumnName() {
-		return columnName;
-	}
-
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
-		RaisePropertyChanged();
-	}
-
-	public String getDataType() {
-		return dataType;
-	}
-
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-		RaisePropertyChanged();
-	}
-
-	public Object getDefaultValue() {
-		return defaultValue;
-	}
-
-	public void setDefaultValue(Object defaultValue) {
-		this.defaultValue = defaultValue;
-		RaisePropertyChanged();
-	}
-
-	public HashMap<String, Object> getExtendedProperties() {
-		return extendedProperties;
-	}
-
-	public void setExtendedProperties(HashMap<String, Object> extendedProperties) {
-		this.extendedProperties = extendedProperties;
-		RaisePropertyChanged();
-	}
-
-	public int getMaxLength() {
-		return maxLength;
-	}
-
-	public void setMaxLength(int maxLength) {
-		this.maxLength = maxLength;
-		RaisePropertyChanged();
-	}
-
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-		RaisePropertyChanged();
-	}
-
-	public boolean isUnique() {
-		return unique;
-	}
-
-	public void setUnique(boolean unique) {
-		this.unique = unique;
-		RaisePropertyChanged();
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		propertyChanged = null;
+		if (extendedProperties != null)
+			extendedProperties.clear();
 	}
 }

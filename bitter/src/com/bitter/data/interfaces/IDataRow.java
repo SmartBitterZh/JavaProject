@@ -1,4 +1,8 @@
-package com.bitter.data;
+package com.bitter.data.interfaces;
+
+import com.bitter.data.DataColumn;
+import com.bitter.data.DataRowState;
+import com.bitter.data.DataRowVersion;
 
 public interface IDataRow {
 
@@ -46,6 +50,7 @@ public interface IDataRow {
 	 * @return
 	 */
 	Object get(int columnIndex);
+	Object set(int columnIndex);
 
 	/**
 	 * Get or set value of a column.
@@ -55,7 +60,8 @@ public interface IDataRow {
 	 * @return The value.
 	 */
 	Object get(String columnName);
-
+	Object set(String columnIndex);
+	
 	/**
 	 * Get or set value of a column.
 	 * 
@@ -64,7 +70,8 @@ public interface IDataRow {
 	 * @return The value.
 	 */
 	Object get(DataColumn column);
-
+	Object set(DataColumn columnIndex);
+	
 	/**
 	 * Get or set value of a column.
 	 * 
@@ -75,7 +82,7 @@ public interface IDataRow {
 	 * @return The value.
 	 */
 	Object get(int column, DataRowVersion version);
-
+	
 	/**
 	 * Get or set value of a column.
 	 * 
@@ -86,7 +93,7 @@ public interface IDataRow {
 	 * @return
 	 */
 	Object get(String columnName, DataRowVersion version);
-
+	
 	/**
 	 * Get or set value of a column.
 	 * 
@@ -97,7 +104,7 @@ public interface IDataRow {
 	 * @return
 	 */
 	Object get(DataColumn column, DataRowVersion version);
-
+	
 	/**
 	 * Check if the value of a column is null.
 	 * 

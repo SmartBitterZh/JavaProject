@@ -22,7 +22,7 @@
 	-->
 </head>
 <body>
-	Welcome ${userName }
+	Welcome ${userName }<br />
 	<a href="user">user</a>
 	<a href="userAdd">Add user</a>
 	<a href="userUpdate">Update user</a>

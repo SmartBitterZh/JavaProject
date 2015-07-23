@@ -1,6 +1,10 @@
-package com.bitter.data;
+package com.bitter.data.interfaces;
 
 import java.util.HashMap;
+
+import com.bitter.data.DataColumnCollection;
+import com.bitter.data.DataRow;
+import com.bitter.data.DataSet;
 
 public interface IDataTable {
 
@@ -48,7 +52,7 @@ public interface IDataTable {
 	 * 
 	 * @return
 	 */
-	IDataRow addRowEmpty();
+	DataRow addRowEmpty();
 
 	/**
 	 * Add an empty row to the table (Observe that in difference to NewRow of
@@ -57,7 +61,7 @@ public interface IDataTable {
 	 * @param data
 	 * @return
 	 */
-	IDataRow addRow(Object[] data);
+	DataRow addRow(Object[] data);
 
 	/**
 	 * Suspend notifications while loading data.
