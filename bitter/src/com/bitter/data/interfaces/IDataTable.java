@@ -28,6 +28,8 @@ public interface IDataTable {
 	 * @return
 	 */
 	String getTableName();
+	
+	void setTableName(String tableName);
 
 	/**
 	 * Reject any changes made to the table.

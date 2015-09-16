@@ -2,7 +2,7 @@ package com.bitter.data.interfaces;
 
 import com.bitter.data.DataRow;
 
-public interface IDataRowCollection extends Iterable<IDataRow> {
+public interface IDataRowCollection extends Iterable<DataRow> {
 
 	/**
 	 * Determines whether the collection contains a specific row.

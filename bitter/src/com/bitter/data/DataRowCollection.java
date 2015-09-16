@@ -6,7 +6,7 @@ import com.bitter.data.exception.BDataException;
 import com.bitter.data.interfaces.IDataRow;
 
 public class DataRowCollection extends BaseRowCollection {
-	
+
 	private boolean m_deleted;
 
 	protected DataRowCollection(boolean deleted, DataTable list) {
@@ -17,28 +17,28 @@ public class DataRowCollection extends BaseRowCollection {
 
 	public DataRowCollection getDeleteRows() throws BDataException {
 		checkDeleted();
-		return new DataRowCollection(true, (DataTable)this.getList());
+		return new DataRowCollection(true, (DataTable) this.getList());
 	}
 
-	private void checkDeleted() throws BDataException{
-		if(m_deleted)
+	private void checkDeleted() throws BDataException {
+		if (m_deleted)
 			throw new BDataException("Not valid from a deleted row colleciton");
 	}
-	
-	public DataRow add(Object[] values) throws BDataException{
+
+	public DataRow add(Object[] values) throws BDataException {
 		this.checkDeleted();
-		return ((DataTable)this.getList()).addRow(values);
+		return ((DataTable) this.getList()).addRow(values);
 	}
-	
+
 	@Override
 	protected Iterator GetTableEnumerator() {
 		// TODO Auto-generated method stub
-		if(m_deleted)
-			return ((DataTable)this.getList()).getDeletedRows();
+		if (m_deleted)
+			return ((DataTable) this.getList()).getDeletedRows();
 		else
 			return this.getList().iterator();
 	}
-	
+
 	@Override
 	public void Clear() {
 		// TODO Auto-generated method stub

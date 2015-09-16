@@ -1,5 +1,6 @@
 package com.bitter.data;
 
+import com.bitter.eventhandler.EventArgs;
 import com.bitter.eventhandler.IEventHandler;
 
 public class DoneEventHandler implements IEventHandler {
@@ -9,7 +10,7 @@ public class DoneEventHandler implements IEventHandler {
 	}
 
 	@Override
-	public void invoked(Object sender, Object args) {
+	public void invoked(Object sender, EventArgs args) {
 		// TODO Auto-generated method stub
 		Done(sender,args);
 	}

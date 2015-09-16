@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.bitter.eventhandler.IEventHandler;
+import com.opensymphony.xwork2.util.Element;
 
 public class DataColumnCollection extends AbstractList<DataColumn> implements
 		Serializable {
@@ -21,7 +22,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 	private List<DataColumn> list;
 	private IEventHandler listChanged;
 	private Object syncRoot;
-	
+
 	private DataColumnCollection() {
 		list = new ArrayList<DataColumn>();
 	}
@@ -70,7 +71,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		return false;
 	}
 
-	public void insert(int index, DataColumn column) {
+	public void insert(int index, DataColumn column) throws Exception {
 		synchronized (syncRoot) {
 			dontSerialize();
 			this.list.add(index, column);
@@ -112,8 +113,13 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		synchronized (syncRoot) {
 			this.list.add(index, element);
 			if (listChanged != null)
-				listChanged.invoked(this, new ListChangedEventArgs(
-						ListChangedType.ItemAdded, index));
+				try {
+					listChanged.invoked(this, new ListChangedEventArgs(
+							ListChangedType.ItemAdded, index));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 		return element;
 	}
@@ -135,7 +141,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		}
 	}
 
-	public void addColumn(DataColumn column) {
+	public void addColumn(DataColumn column) throws Exception {
 		synchronized (syncRoot) {
 			dontSerialize();
 			this.list.add(column);
@@ -158,8 +164,9 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 	 * 
 	 * @param name
 	 * @return
+	 * @throws Exception
 	 */
-	public DataColumn add(String name) {
+	public DataColumn add(String name) throws Exception {
 		return this.add(name, String.class.getSimpleName(), null);
 	}
 
@@ -168,8 +175,9 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 	 * @param name
 	 * @param dataType
 	 * @return
+	 * @throws Exception
 	 */
-	public DataColumn add(String name, String dataType) {
+	public DataColumn add(String name, String dataType) throws Exception {
 		return this.add(name, dataType, null);
 	}
 
@@ -179,8 +187,10 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 	 * @param dataType
 	 * @param caption
 	 * @return
+	 * @throws Exception
 	 */
-	public DataColumn add(String name, String dataType, String caption) {
+	public DataColumn add(String name, String dataType, String caption)
+			throws Exception {
 		DataColumn column = new DataColumn(name, dataType, caption);
 		synchronized (syncRoot) {
 			dontSerialize();
@@ -194,8 +204,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 
 	public void copyTo(ArrayList<DataColumn> columnArray, int arrayIndex) {
 		synchronized (syncRoot) {
-			this.list
-					.addAll(arrayIndex, new ArrayList<DataColumn>(columnArray));
+			columnArray.addAll(arrayIndex, this.list);
 		}
 	}
 
@@ -210,10 +219,20 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 			for (DataColumn _clolumn : list) {
 				_clolumn.removePropertyChanged();
 			}
+
+			list.clear();
+			if (listChanged != null)
+				try {
+					listChanged.invoked(this, new ListChangedEventArgs(
+							ListChangedType.Reset, -1));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 	}
 
-	public void removeAt(int index) {
+	public void removeAt(int index) throws Exception {
 		synchronized (syncRoot) {
 			dontSerialize();
 			DataColumn _column = this.list.get(index);
@@ -225,7 +244,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		}
 	}
 
-	public boolean remove(DataColumn column) {
+	public boolean remove(DataColumn column) throws Exception {
 		synchronized (syncRoot) {
 			int _ind = this.indexOf(column);
 			if (_ind >= 0) {
@@ -236,7 +255,7 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		return false;
 	}
 
-	public boolean remove(String name) {
+	public boolean remove(String name) throws Exception {
 		synchronized (syncRoot) {
 			int _ind = this.indexOf(name);
 			if (_ind >= 0) {
@@ -267,22 +286,31 @@ public class DataColumnCollection extends AbstractList<DataColumn> implements
 		return _removeColumn;
 	}
 
-	public boolean isReadOnly(){
+	public boolean isReadOnly() {
 		return false;
 	}
-	
-	public DataColumn[] toArray(){
+
+	public DataColumn[] toArray() {
 		synchronized (syncRoot) {
 			return (DataColumn[]) this.list.toArray();
 		}
 	}
-	
-	public Iterator<DataColumn> getIterator(){
+
+	public Iterator<DataColumn> getIterator() {
 		return this.list.iterator();
 	}
-	
+
+	/**
+	 * 
+	 */
 	private void dontSerialize() {
-		
+
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		listChanged = null;
 	}
 }
 
@@ -318,7 +346,7 @@ final class DataColumnSerializable implements Serializable {
 		this.maxLength = column.getMaxLength();
 	}
 
-	public DataColumn getDataColumn() {
+	public DataColumn getDataColumn() throws Exception {
 		DataColumn _column = new DataColumn(name, dataType);
 		_column.setCaption(caption);
 		_column.setAllowDBNull(allowDBNull);

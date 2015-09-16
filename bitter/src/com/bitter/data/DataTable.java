@@ -1,28 +1,31 @@
 package com.bitter.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.bitter.data.interfaces.IDataRow;
 import com.bitter.data.interfaces.IDataRowCollection;
 import com.bitter.data.interfaces.IDataTable;
+import com.bitter.eventhandler.IEventHandler;
 
 public class DataTable implements IDataTable, Serializable, Cloneable, List {
 
 	/**
-	 * 
+	 * ---------------------- private properties
+	 * --------------------------------
 	 */
 	private static final long serialVersionUID = 1L;
 	private int m_tableIndex;
+	private String m_tableName;
+	private IEventHandler listChanged;
+	private DataRowChangedHandler rowChanged;
+
+	// ---------------------- constructor ------------------------------
 
 	public DataTable() {
 		this(false);
@@ -32,10 +35,67 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 
 	}
 
+	/**
+	 * ---------------------- public methods -----------------------------
+	 */
+
+	public void addListChanged(IEventHandler listChanged) {
+		this.listChanged = listChanged;
+	}
+
+	public void removeListChanged() {
+		listChanged = null;
+	}
+
+	public void addRowChanged(DataRowChangedHandler rowChanged) {
+		this.rowChanged = rowChanged;
+	}
+
+	public void removeRowChanged() {
+		rowChanged = null;
+	}
+	
+	public DataRowState getRowState(Object row){
+		
+		return DataRowState.Current;
+	}
+	
+	public Object[] getOriginalRow(Object[] row){
+		
+		return row;
+	}
+
+	public void acceptChanges(Object[] row){
+		
+	}
+	
+	public void rejectChanges(Object[] row) {
+
+	}
+	/**
+	 * ---------------------- private methods -----------------------------
+	 */
+
 	Iterator getDeletedRows() {
 		return null;
 	}
 
+	private Object[] convertRow(Object[] rows) {
+		Object[] _ret = new Object[rows.length];
+		/*
+		 * for (int i = 0; i < rows.length; i++) { _ret[i] =
+		 * convertValue(columns[i], rows[i]) }
+		 */
+		return _ret;
+	}
+
+	private static Object convertValue(DataColumn column, Object value) {
+		return null;
+	}
+
+	/**
+	 * ---------------------- Override -----------------------------
+	 */
 	@Override
 	public DataSet getDataSet() {
 		// TODO Auto-generated method stub
@@ -45,7 +105,13 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 	@Override
 	public String getTableName() {
 		// TODO Auto-generated method stub
-		return null;
+		return m_tableName;
+	}
+
+	@Override
+	public void setTableName(String tableName) {
+		// TODO Auto-generated method stub
+		m_tableName = tableName;
 	}
 
 	@Override
@@ -57,7 +123,7 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 	@Override
 	public void acceptChanges() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -282,7 +348,7 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 		return null;
 	}
 
-	static class ChangeData {
+	static class ChangedData {
 		private static boolean added;
 		private Object[] originalData;
 		private Object[] data;
@@ -292,7 +358,7 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 		}
 
 		public static void setAdded(boolean added) {
-			ChangeData.added = added;
+			ChangedData.added = added;
 		}
 
 		public Object[] getOriginalData() {
@@ -311,11 +377,11 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 			this.data = data;
 		}
 
-		public ChangeData(Object[] originalData, Object[] data) {
+		public ChangedData(Object[] originalData, Object[] data) {
 			this(originalData, data, false);
 		}
 
-		public ChangeData(Object[] originalData, Object[] data, boolean added) {
+		public ChangedData(Object[] originalData, Object[] data, boolean added) {
 			this.originalData = originalData;
 			this.data = data;
 			this.added = added;
@@ -367,4 +433,20 @@ public class DataTable implements IDataTable, Serializable, Cloneable, List {
 		}
 
 	}
+
+	final class OriginalRowwsCollection extends LinkedList<ChangedData> {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private DataTable table;
+
+		public OriginalRowwsCollection(DataTable table) {
+			this.table = table;
+		}
+	}
+	
+
 }

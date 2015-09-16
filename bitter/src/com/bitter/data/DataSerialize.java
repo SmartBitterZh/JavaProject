@@ -1,11 +1,9 @@
 package com.bitter.data;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.Comparator;
 import java.util.Hashtable;
 
@@ -20,9 +18,9 @@ public abstract class DataSerialize implements Serializable {
 		return null;
 	}
 
-	public abstract Object Deserialize(InputStream inStream);
+	public abstract Object Deserialize(DataInputStream inStream);
 
-	public abstract boolean Serialize(OutputStream outStream, Object obj);
+	public abstract boolean Serialize(DataOutputStream outStream, Object obj);
 
 	private static DataSerialize valueSerializer(String type) {
 		return null;
@@ -38,13 +36,64 @@ public abstract class DataSerialize implements Serializable {
 	}
 
 	static {
-		// registerTypeSerializer(Object.class.getSimpleName(),new );
+		registerTypeSerializer(Object.class.getSimpleName(),
+				new DataObjectSerialize());
 	}
 
 	public static DataSerialize getSerializer(String type) {
 		return null;
 
 	}
+}
+
+final class DataObjectSerialize extends DataSerialize implements Serializable {
+
+	@Override
+	public Object Deserialize(DataInputStream inStream) {
+		// TODO Auto-generated method stub
+		try {
+			switch (inStream.read()) {
+			case 0:
+				return null;
+			case 1:
+				return null;
+			default:
+				DataSerialize serialize = DataSerialize.getSerializer(inStream
+						.readUTF());
+				return serialize.Deserialize(inStream);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean Serialize(DataOutputStream outStream, Object obj) {
+		// TODO Auto-generated method stub
+		if (obj == null) {
+			try {
+				outStream.write(0);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			DataSerialize serialize = DataSerialize.getSerializer(obj
+					.getClass().getSimpleName());
+			try {
+				outStream.writeByte((byte) 2);
+				outStream.writeUTF(obj.getClass().getSimpleName());
+				serialize.Serialize(outStream, obj);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
 }
 
 final class DataStringSerialize extends DataSerialize implements Serializable {
@@ -54,7 +103,7 @@ final class DataStringSerialize extends DataSerialize implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Object Deserialize(InputStream inStream) {
+	public Object Deserialize(DataInputStream inStream) {
 		// TODO Auto-generated method stub
 		byte[] _rData = new byte[512];
 		try {
@@ -76,7 +125,7 @@ final class DataStringSerialize extends DataSerialize implements Serializable {
 	}
 
 	@Override
-	public boolean Serialize(OutputStream outStream, Object obj) {
+	public boolean Serialize(DataOutputStream outStream, Object obj) {
 		// TODO Auto-generated method stub
 		if (obj == null) {
 			try {

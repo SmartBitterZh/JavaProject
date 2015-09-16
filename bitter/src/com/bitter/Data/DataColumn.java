@@ -27,7 +27,7 @@ public class DataColumn implements Serializable {
 	private boolean unique;
 	private IEventHandler propertyChanged;
 
-	private void RaisePropertyChanged() {
+	private void RaisePropertyChanged() throws Exception {
 		if (propertyChanged != null)
 			propertyChanged.invoked(this, EventArgs.Empty);
 	}
@@ -36,7 +36,7 @@ public class DataColumn implements Serializable {
 		return allowDBNull;
 	}
 
-	public void setAllowDBNull(boolean allowDBNull) {
+	public void setAllowDBNull(boolean allowDBNull) throws Exception {
 		if (this.allowDBNull != allowDBNull) {
 			this.allowDBNull = allowDBNull;
 			RaisePropertyChanged();
@@ -47,7 +47,7 @@ public class DataColumn implements Serializable {
 		return caption.isEmpty() ? columnName : caption;
 	}
 
-	public void setCaption(String caption) {
+	public void setCaption(String caption) throws Exception {
 		String _newCaption = caption.isEmpty() ? "" : caption;
 		if (!this.caption.equals(_newCaption)) {
 			this.caption = _newCaption;
@@ -59,7 +59,7 @@ public class DataColumn implements Serializable {
 		return columnName;
 	}
 
-	public void setColumnName(String columnName) {
+	public void setColumnName(String columnName) throws Exception {
 		String _newColumnName = columnName.isEmpty() ? "" : columnName;
 		if (!this.caption.equals(_newColumnName)) {
 			this.columnName = _newColumnName;
@@ -71,7 +71,7 @@ public class DataColumn implements Serializable {
 		return dataType;
 	}
 
-	public void setDataType(String dataType) {
+	public void setDataType(String dataType) throws Exception {
 		if (!this.dataType.equals(dataType)) {
 			this.dataType = dataType;
 			RaisePropertyChanged();
@@ -101,7 +101,7 @@ public class DataColumn implements Serializable {
 		return maxLength;
 	}
 
-	public void setMaxLength(int maxLength) {
+	public void setMaxLength(int maxLength) throws Exception {
 		if (this.maxLength != maxLength) {
 			this.maxLength = maxLength;
 			RaisePropertyChanged();
@@ -112,7 +112,7 @@ public class DataColumn implements Serializable {
 		return readOnly;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) throws Exception {
 		if (this.readOnly != readOnly) {
 			this.readOnly = readOnly;
 			RaisePropertyChanged();
@@ -123,7 +123,7 @@ public class DataColumn implements Serializable {
 		return unique;
 	}
 
-	public void setUnique(boolean unique) {
+	public void setUnique(boolean unique) throws Exception {
 		if (this.unique != unique) {
 			this.unique = unique;
 			RaisePropertyChanged();
@@ -138,7 +138,7 @@ public class DataColumn implements Serializable {
 		propertyChanged = null;
 	}
 
-	public DataColumn getDataColumn() {
+	public DataColumn getDataColumn() throws Exception {
 		DataColumn _column = new DataColumn(this.columnName, this.dataType);
 		_column.setAllowDBNull(this.allowDBNull);
 		if (this.caption != null)
@@ -217,6 +217,7 @@ public class DataColumn implements Serializable {
 	@Override
 	protected void finalize() throws Throwable {
 		// TODO Auto-generated method stub
+		super.finalize();
 		propertyChanged = null;
 		if (extendedProperties != null)
 			extendedProperties.clear();

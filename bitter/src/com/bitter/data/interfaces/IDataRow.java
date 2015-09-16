@@ -50,7 +50,7 @@ public interface IDataRow {
 	 * @return
 	 */
 	Object get(int columnIndex);
-	Object set(int columnIndex);
+	void set(int columnIndex, Object value);
 
 	/**
 	 * Get or set value of a column.
@@ -60,7 +60,7 @@ public interface IDataRow {
 	 * @return The value.
 	 */
 	Object get(String columnName);
-	Object set(String columnIndex);
+	void set(String columnName, Object value);
 	
 	/**
 	 * Get or set value of a column.
@@ -70,7 +70,7 @@ public interface IDataRow {
 	 * @return The value.
 	 */
 	Object get(DataColumn column);
-	Object set(DataColumn columnIndex);
+	void set(DataColumn column, Object value);
 	
 	/**
 	 * Get or set value of a column.
@@ -105,6 +105,13 @@ public interface IDataRow {
 	 */
 	Object get(DataColumn column, DataRowVersion version);
 	
+
+	/**
+	 * 
+	 * @param column
+	 * @return
+	 */
+	boolean IsNull(String column);
 	/**
 	 * Check if the value of a column is null.
 	 * 

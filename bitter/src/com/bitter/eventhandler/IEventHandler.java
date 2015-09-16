@@ -6,5 +6,5 @@ public interface IEventHandler {
 	 * @param sender
 	 * @param args (object or EventArgs)
 	 */
-	public void invoked(Object sender, Object args);
+	public void invoked(Object sender, EventArgs args) throws Exception;
 }

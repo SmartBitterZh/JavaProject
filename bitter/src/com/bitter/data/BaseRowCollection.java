@@ -48,7 +48,7 @@ public abstract class BaseRowCollection implements IDataRowCollection {
 		@Override
 		public void remove() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	}

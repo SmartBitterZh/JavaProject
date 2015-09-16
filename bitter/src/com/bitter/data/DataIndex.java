@@ -2,10 +2,12 @@ package com.bitter.data;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
 import com.bitter.data.interfaces.IDataRow;
+import com.bitter.eventhandler.EventArgs;
 
 public class DataIndex {
 	DataTable table;
@@ -51,7 +53,66 @@ public class DataIndex {
 
 		//
 		for (IDataRow _row : table.getRows()) {
+			this.addRow(_row.ItemArray());
+		}
+		table.addRowChanged(new DataRowChangedHandler() {
 
+			@Override
+			public void invoked(Object sender, EventArgs args) throws Exception {
+				// TODO Auto-generated method stub
+				tabelRowChanged(sender, (DataRowChangedArgs) args);
+			}
+		});
+	}
+
+	private void tabelRowChanged(Object sender, DataRowChangedArgs args) {
+		synchronized (this) {
+			if (references == 0)
+				return;
+			RowOperation _operation = args.getRowOperation();
+			if (_operation == RowOperation.Reset) {
+				indexRows.clear();
+				for (DataRow row : table.getRows()) {
+					this.addRow(row.ItemArray());
+				}
+			} else if (_operation == RowOperation.RowAdd
+					|| _operation == RowOperation.RowAddAccepted) {
+				this.addRow(args.getNewRow());
+			} else if (_operation == RowOperation.RowRemoved) {
+				if (args.getNewRow()[indexColumn] != null) {
+					if (indexRows.containsKey(args.getNewRow()[indexColumn])) {
+						Object[][] indexEntry = indexRows
+								.get(args.getNewRow()[indexColumn]);
+						for (int i = 0; i < indexEntry.length; i++) {
+							if (indexEntry[i] != args.getNewRow()) {
+								indexEntry[i] = null;
+								break;
+							}
+						}
+					}
+				}
+			} else if (_operation == RowOperation.RowUpdated) {
+				Object oldVal = args.getOldRow()[indexColumn];
+				Object newVal = args.getNewRow()[indexColumn];
+				boolean equals = (oldVal != null && oldVal.equals(newVal));
+				if (oldVal != null && !equals) {
+					this.tabelRowChanged(sender, new DataRowChangedArgs(
+							RowOperation.RowRemoved, args.getOldRow()));
+				}
+				if (args.getNewRow()[indexColumn] != null && !equals) {
+					this.tabelRowChanged(sender, new DataRowChangedArgs(
+							RowOperation.RowAdd, args.getNewRow()));
+				}
+			} else if (_operation == RowOperation.RowMoved) {
+				if(args.getOldRow()[indexColumn]!=null){
+					this.tabelRowChanged(sender, new DataRowChangedArgs(
+							RowOperation.RowRemoved, args.getOldRow()));
+				}
+				if(args.getNewRow()[indexColumn]!=null){
+					this.tabelRowChanged(sender, new DataRowChangedArgs(
+							RowOperation.RowAdd, args.getNewRow()));
+				}
+			}
 		}
 	}
 
@@ -66,8 +127,7 @@ public class DataIndex {
 	public List<Object[]> getRows(Object value) {
 		synchronized (this) {
 			ArrayList<Object[]> _rows = new ArrayList<>();
-			boolean _containKey = false;
-			_containKey = indexRows.containsKey(value);
+			boolean _containKey = indexRows.containsKey(value);
 
 			if (value != null && _containKey) {
 				for (Object[] indexRow : indexRows.get(value)) {
@@ -76,6 +136,67 @@ public class DataIndex {
 				}
 			}
 			return _rows;
+		}
+	}
+
+	public List<DataRow> getDataRows(Object value) {
+		List<DataRow> _list = new ArrayList<DataRow>();
+		boolean _containKey = indexRows.containsKey(value);
+
+		if (value != null && _containKey) {
+			for (Object[] indexRow : indexRows.get(value)) {
+				if (indexRow != null)
+					_list.add(new DataRow(table, indexRow));
+			}
+		}
+
+		return _list;
+	}
+
+	protected void addReference() {
+		synchronized (this) {
+			references++;
+		}
+	}
+
+	private boolean removerRefrence() {
+		synchronized (this) {
+			references--;
+			if (references == 0) {
+				table.removeRowChanged();
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private void addRow(Object[] row) {
+		Object val = row[indexColumn];
+		if (val != null) {
+			if (indexRows.containsKey(val)) {
+				Object[][] indexEntry = indexRows.get(val);
+				int i;
+				if (indexEntry.length > FirstSize)
+					i = indexEntry.length / 2;
+				else
+					i = 1;
+				while (i < indexEntry.length) {
+					if (indexEntry[i] == null) {
+						indexEntry[i] = row;
+						return;
+					}
+					i++;
+				}
+				Object[][] newEntry = new Object[indexEntry.length * 2][];
+				for (int j = 0; j < indexEntry.length; j++)
+					newEntry[j] = indexEntry[j];
+				newEntry[indexEntry.length] = row;
+				indexRows.put(val, newEntry);
+			} else {
+				Object[][] indexEntry = new Object[FirstSize][];
+				indexEntry[0] = row;
+				indexRows.put(val, indexEntry);
+			}
 		}
 	}
 }
